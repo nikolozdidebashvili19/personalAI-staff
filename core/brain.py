@@ -34,7 +34,7 @@ class Brain:
             self._claude = anthropic.Anthropic(api_key=settings.anthropic_api_key)
         if _HAS_GEMINI and settings.has_gemini:
             genai.configure(api_key=settings.gemini_api_key)
-            self._gemini = genai.GenerativeModel("gemini-1.5-flash")
+            self._gemini = genai.GenerativeModel(settings.gemini_model)
 
     @property
     def available(self) -> bool:
