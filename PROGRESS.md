@@ -34,10 +34,18 @@
 
 ## ✅ Verification done (2026-07-08)
 - All modules compile (python -m compileall)
-- All 24 modules import cleanly; ~37 tools register across the full app
-- Memory system tested: event store, recall, profile facts all work
+- All 22 modules import cleanly with full deps; 37 tools register
+- Memory system tested end-to-end incl. ChromaDB vector recall
 - `python main.py` without .env degrades gracefully (clear setup message)
-- Full requirements.txt + Playwright Chromium install kicked off
+- Full requirements.txt installed + Playwright Chromium downloaded
+  (first install hit disk-full; fixed by purging pip cache + chunked install)
+
+## ⚠️ Known follow-ups
+- google.generativeai package is deprecated → migrate core/brain.py to the
+  new `google-genai` package at some point (current one still works)
+- Optional: add Gemini function-calling so tools work without an Anthropic key
+- User put a real Gemini key in .env.example — must move to .env and rotate;
+  .env.example is git-TRACKED (adding it to .gitignore does not untrack it)
 
 ## ⏳ Not Started / Future ideas
 - Cross-posting to other platforms (marketer)
