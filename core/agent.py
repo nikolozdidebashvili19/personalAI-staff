@@ -133,8 +133,12 @@ RULES:
         # keep the rolling window bounded
         if len(self.history) > 40:
             self.history = self.history[-40:]
-            # history must start with a user turn
-            while self.history and self.history[0]["role"] != "user":
+            # history must start with a plain user turn (a leading tool_result
+            # block without its matching tool_use would be rejected by the API)
+            while self.history and not (
+                self.history[0]["role"] == "user"
+                and isinstance(self.history[0]["content"], str)
+            ):
                 self.history.pop(0)
 
         api_tools = tools.to_api() if brain.supports_tools else None
