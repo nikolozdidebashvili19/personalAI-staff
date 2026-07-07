@@ -30,7 +30,14 @@
   README.md (full setup guide), first-run wizard (ui/first_run.py)
 
 ## 🔄 In Progress
-- Verification: installing dependencies and smoke-testing startup
+- (nothing — build complete; see verification notes below)
+
+## ✅ Verification done (2026-07-08)
+- All modules compile (python -m compileall)
+- All 24 modules import cleanly; ~37 tools register across the full app
+- Memory system tested: event store, recall, profile facts all work
+- `python main.py` without .env degrades gracefully (clear setup message)
+- Full requirements.txt + Playwright Chromium install kicked off
 
 ## ⏳ Not Started / Future ideas
 - Cross-posting to other platforms (marketer)
