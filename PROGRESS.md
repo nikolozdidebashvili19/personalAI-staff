@@ -16,18 +16,29 @@
 - Phase 4 — Computer use: core/computer_use.py (Playwright persistent-profile
   browser, PyAutoGUI desktop helpers, Claude-vision action loop, browser_open /
   browser_task / read_current_page tools)
+- Phase 5 — LinkedIn: integrations/linkedin_agent.py (post via selectors with
+  vision fallback, job search, Easy Apply with confirmation)
+- Phase 6 — GitHub: integrations/github_agent.py (PR review list, digest,
+  notifications, repo summary)
+- Phase 7 — Facebook: integrations/facebook_agent.py (create listing with photo
+  upload, check messages, mark sold)
+- Phase 8 — Sub-agents: agents/marketer.py, job_hunter.py (with SQLite
+  application tracker), assistant.py, seller.py, dev_monitor.py
+- Phase 9 — Morning routine: core/scheduler.py (daily schedule + on-demand
+  morning_briefing tool, notification + voice delivery)
+- Phase 10 — Polish: ui/notifications.py (toast), ui/dashboard.py (live status),
+  README.md (full setup guide), first-run wizard (ui/first_run.py)
 
 ## 🔄 In Progress
-- Phase 5: LinkedIn agent (integrations/linkedin_agent.py) — starting now
+- Verification: installing dependencies and smoke-testing startup
 
-## ⏳ Not Started
-- Phase 5 — LinkedIn (browser automation)
-- Phase 6 — GitHub (API integration)
-- Phase 7 — Facebook Marketplace (browser automation)
-- Phase 8 — Sub-Agents (marketer, job hunter, assistant, seller, dev monitor)
-- Phase 9 — Morning Routine (scheduler + briefing)
-- Phase 10 — Polish (notifications, README, first-run wizard)
+## ⏳ Not Started / Future ideas
+- Cross-posting to other platforms (marketer)
+- Indeed/Glassdoor job sources in addition to LinkedIn
+- Price-adjustment automation for marketplace listings
+- Wake-word engine upgrade (pvporcupine) if whisper chunking is too slow
 
 ## 🔧 Current Session Goal
-Build the full project scaffold and implement as many phases as possible,
-committing to git after each phase.
+Full scaffold built (all 10 phases coded). Remaining: dependency install +
+smoke test + final commit. User still needs to: create .env with API keys,
+run `playwright install chromium`, and do the first-run wizard.
