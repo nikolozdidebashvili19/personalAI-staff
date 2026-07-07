@@ -1,5 +1,10 @@
 .env
 __pycache__/
+data/
+logs/
+config/user_profile.json
+*.mp3
+token.json
 *.py[cod]
 .venv/
 venv/
