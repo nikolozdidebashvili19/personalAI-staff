@@ -94,6 +94,57 @@ def github_notifications() -> str:
 
 
 @tools.register(
+    "github_create_repo",
+    "Create a new repository on the user's GitHub account. User confirms first. "
+    "Tip: a public repo named exactly like the username hosts the profile README.",
+    {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "description": {"type": "string"},
+            "private": {"type": "boolean", "default": False},
+        },
+        "required": ["name"],
+    },
+    requires_confirmation=True,
+)
+def github_create_repo(name: str, description: str = "", private: bool = False) -> str:
+    gh = _gh()
+    repo = gh.get_user().create_repo(name=name, description=description, private=private, auto_init=True)
+    return f"Repository created: {repo.html_url}"
+
+
+@tools.register(
+    "github_push_file",
+    "Create or update a single file in one of the user's GitHub repos (e.g. the profile "
+    "README.md). Commits directly to the default branch. User confirms first.",
+    {
+        "type": "object",
+        "properties": {
+            "repo": {"type": "string", "description": "Repo name, or owner/name"},
+            "path": {"type": "string", "description": "File path in the repo, e.g. README.md"},
+            "content": {"type": "string", "description": "Full new file content"},
+            "commit_message": {"type": "string", "default": "Update via Aria"},
+        },
+        "required": ["repo", "path", "content"],
+    },
+    requires_confirmation=True,
+)
+def github_push_file(repo: str, path: str, content: str, commit_message: str = "Update via Aria") -> str:
+    gh = _gh()
+    full = repo if "/" in repo else f"{gh.get_user().login}/{repo}"
+    r = gh.get_repo(full)
+    try:
+        existing = r.get_contents(path)
+        r.update_file(path, commit_message, content, existing.sha)
+        action = "updated"
+    except Exception:
+        r.create_file(path, commit_message, content)
+        action = "created"
+    return f"{path} {action} in {full} — https://github.com/{full}/blob/{r.default_branch}/{path}"
+
+
+@tools.register(
     "github_repo_summary",
     "Summarize one repository: description, open issues/PRs count, last push, top languages.",
     {

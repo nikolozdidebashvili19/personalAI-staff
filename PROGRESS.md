@@ -40,12 +40,21 @@
 - Full requirements.txt installed + Playwright Chromium downloaded
   (first install hit disk-full; fixed by purging pip cache + chunked install)
 
+## ✅ Gemini upgrade (2026-07-08, later session)
+- core/brain.py migrated to the new `google-genai` SDK
+- Gemini now does FULL tool calling (translation layer: anthropic message
+  format <-> gemini contents, incl. images and Gemini-3 thought signatures)
+- Model fallback chain for free-tier quotas: GEMINI_MODEL (gemini-3.5-flash,
+  only 20 req/day free!) -> gemini-2.5-flash -> gemini-2.0-flash -> flash-latest
+- integrations/github_agent.py: added github_create_repo + github_push_file
+  (both require user confirmation)
+- Live-verified: tool round trip via Gemini works; GitHub token authenticates
+  (note: token account is nikolozdidebashvili19, .env says ERRORniku404)
+
 ## ⚠️ Known follow-ups
-- google.generativeai package is deprecated → migrate core/brain.py to the
-  new `google-genai` package at some point (current one still works)
-- Optional: add Gemini function-calling so tools work without an Anthropic key
-- User put a real Gemini key in .env.example — must move to .env and rotate;
-  .env.example is git-TRACKED (adding it to .gitignore does not untrack it)
+- Add prompt caching to the Claude path when the user gets an Anthropic key
+- Real secrets were briefly in tracked .env.example (since sanitized) — user
+  should rotate the Gemini key at some point
 
 ## ⏳ Not Started / Future ideas
 - Cross-posting to other platforms (marketer)

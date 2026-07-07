@@ -174,8 +174,8 @@ see evidence for; prefer click_text with visible labels."""
 
 def vision_browser_task(goal: str, max_steps: int = 15) -> str:
     """Drive the browser toward `goal` using screenshots + Claude vision."""
-    if not brain.supports_tools:
-        return "Vision computer use needs the Claude API (ANTHROPIC_API_KEY)."
+    if not brain.available:
+        return "Vision computer use needs an AI brain (ANTHROPIC_API_KEY or GEMINI_API_KEY)."
     b = browser()
     transcript = []
     for step in range(max_steps):
