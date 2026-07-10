@@ -19,7 +19,7 @@ function renderMarkdown(text) {
   const codeBlocks = [];
   let src = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _lang, code) => {
     codeBlocks.push(code);
-    return ` ${codeBlocks.length - 1} `;
+    return `\u0000${codeBlocks.length - 1}\u0000`;
   });
 
   src = escapeHtml(src);
@@ -43,7 +43,7 @@ function renderMarkdown(text) {
     return `<ol>${items}</ol>`;
   });
 
-  src = src.replace(/ (\d+) /g, (_, i) => `<pre><code>${escapeHtml(codeBlocks[+i])}</code></pre>`);
+  src = src.replace(/\u0000(\d+)\u0000/g, (_, i) => `<pre><code>${escapeHtml(codeBlocks[+i])}</code></pre>`);
   return src;
 }
 

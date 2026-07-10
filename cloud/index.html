@@ -114,7 +114,7 @@ let thinkingEl = null;
 function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function renderMarkdown(text) {
   const blocks = [];
-  let src = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _l, c) => { blocks.push(c); return ` ${blocks.length - 1} `; });
+  let src = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _l, c) => { blocks.push(c); return `\u0000${blocks.length - 1}\u0000`; });
   src = escapeHtml(src);
   src = src.replace(/`([^`\n]+)`/g, "<code>$1</code>");
   src = src.replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
@@ -124,7 +124,7 @@ function renderMarkdown(text) {
   src = src.replace(/(^|[^"(])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
   src = src.replace(/((?:^[-*] .+\n?)+)/gm, (b) => "<ul>" + b.trim().split("\n").map((l) => `<li>${l.replace(/^[-*] /, "")}</li>`).join("") + "</ul>");
   src = src.replace(/((?:^\d+\. .+\n?)+)/gm, (b) => "<ol>" + b.trim().split("\n").map((l) => `<li>${l.replace(/^\d+\. /, "")}</li>`).join("") + "</ol>");
-  src = src.replace(/ (\d+) /g, (_, i) => `<pre><code>${escapeHtml(blocks[+i])}</code></pre>`);
+  src = src.replace(/\u0000(\d+)\u0000/g, (_, i) => `<pre><code>${escapeHtml(blocks[+i])}</code></pre>`);
   return src;
 }
 
