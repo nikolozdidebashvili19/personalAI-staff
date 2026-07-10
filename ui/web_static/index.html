@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aria — Personal AI Chief of Staff</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- key gate: shown first, chat unlocks after entering keys -->
+  <div class="gate" id="gate">
+    <div class="gate-card">
+      <div class="gate-avatar" id="gateAvatar">A</div>
+      <h1 id="gateTitle">Welcome</h1>
+      <p class="gate-sub">Enter your API keys to start. At least one is required.</p>
+
+      <label>
+        Claude API key <span class="hint" id="claudeHint"></span>
+        <input type="password" id="claudeKey" placeholder="sk-ant-…" autocomplete="off" />
+      </label>
+      <label>
+        Gemini API key <span class="hint" id="geminiHint"></span>
+        <input type="password" id="geminiKey" placeholder="AIza…" autocomplete="off" />
+      </label>
+
+      <button id="enterBtn">Enter</button>
+      <p class="gate-error hidden" id="gateError"></p>
+      <p class="gate-note">Keys are saved to the local <code>.env</code> file on your machine only.</p>
+    </div>
+  </div>
+
+  <!-- chat: hidden until the gate is passed -->
+  <div class="chat hidden" id="chat">
+    <header class="chat-header">
+      <span class="conn-dot" id="connDot"></span>
+      <span id="headerTitle">Aria</span>
+      <span class="model-badge" id="modelBadge"></span>
+    </header>
+
+    <div class="messages" id="messages"></div>
+
+    <form class="composer" id="composer">
+      <textarea id="input" rows="1" placeholder="Message…" autocomplete="off"></textarea>
+      <button type="submit" id="sendBtn" aria-label="Send">➤</button>
+    </form>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

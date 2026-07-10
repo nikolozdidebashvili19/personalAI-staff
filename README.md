@@ -43,9 +43,15 @@ Everything else is optional — features light up as you add keys:
 | LinkedIn / Facebook | No keys — log in once in the agent's browser window when asked |
 
 ```bash
-# 3. Run
-python main.py
+# 3. Run — pick an interface
+python main.py       # terminal chat (voice, wake word, morning routine)
+python -m ui.web     # web UI → http://localhost:8765
 ```
+
+The web UI first asks for your Claude and Gemini API keys (saved to `.env`;
+already-configured keys can be kept by leaving the field blank), then opens a
+simple browser chat with the same agent and tools. Irreversible actions show
+Allow/Deny cards instead of terminal y/n prompts.
 
 First run asks a few questions (name, work, goals, resume) and saves them to persistent
 memory. Drop your resume at `data/resume.pdf` for job hunting.
@@ -85,7 +91,7 @@ core/computer_use.py     browser/desktop/vision control layers
 core/scheduler.py        morning routine
 integrations/            gmail, calendar, github, linkedin, facebook
 agents/                  marketer, job_hunter, assistant, seller, dev_monitor
-ui/                      chat interface, first-run wizard, dashboard, notifications
+ui/                      chat interface, web UI (ui/web.py), first-run wizard, dashboard
 ```
 
 Extra tools: `python -m ui.dashboard` shows a live status view.

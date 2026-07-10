@@ -28,6 +28,15 @@
   morning_briefing tool, notification + voice delivery)
 - Phase 10 — Polish: ui/notifications.py (toast), ui/dashboard.py (live status),
   README.md (full setup guide), first-run wizard (ui/first_run.py)
+- Phase 11 — Web UI (2026-07-10): ui/web.py (FastAPI + WebSocket, `python -m ui.web`
+  → http://localhost:8765), ui/web_static/ (simple chat page behind an API-key
+  gate: asks for Claude + Gemini keys, saves them to .env via POST /api/keys and
+  re-inits the brain live; configured keys can be kept by leaving fields blank).
+  Allow/Deny confirmation cards for irreversible tools; one agent per browser
+  tab; blocking confirm() bridged to the browser via futures. Also: brain.py
+  Gemini fallback chain now advances on 503 (overloaded), not just 404/429, and
+  gained brain.reinit(). fastapi + uvicorn added to requirements.txt.
+  Verified end-to-end: key gate → chat round-trip in the browser.
 
 ## 🔄 In Progress
 - (nothing — build complete; see verification notes below)

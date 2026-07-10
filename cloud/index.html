@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aria — Personal AI Chief of Staff</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+<style>
+:root {
+  --bg: #0d1117; --bg-panel: #151b23; --bg-raised: #1c2530; --border: #2a3441;
+  --text: #e6edf3; --text-dim: #8b98a5; --accent: #4cc2ff;
+  --accent-soft: rgba(76,194,255,.12); --green: #3fb950; --red: #f85149; --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
+.hidden { display: none !important; }
+
+/* gate */
+.gate { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 20px; }
+.gate-card { width: min(400px, 94vw); background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; padding: 30px 28px; display: flex; flex-direction: column; gap: 14px; text-align: center; }
+.gate-avatar { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto; background: linear-gradient(135deg, #4cc2ff, #7b5cff); display: grid; place-items: center; font-weight: 700; font-size: 26px; color: #fff; }
+.gate-card h1 { font-size: 20px; }
+.gate-sub { color: var(--text-dim); font-size: 13.5px; margin-top: -6px; }
+.gate-card label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-dim); text-align: left; }
+.gate-card .hint { color: var(--green); font-size: 12px; }
+.gate-card input { background: var(--bg-raised); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font: inherit; outline: none; }
+.gate-card input:focus { border-color: var(--accent); }
+.gate-card button { margin-top: 4px; background: var(--accent); color: #05233a; border: none; border-radius: 8px; padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; }
+.gate-card button:disabled { opacity: .5; cursor: default; }
+.gate-error { color: var(--red); font-size: 13px; }
+.gate-note { color: var(--text-dim); font-size: 11.5px; }
+
+/* chat */
+.chat { height: 100vh; height: 100dvh; max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; }
+.chat-header { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); font-weight: 600; }
+.conn-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+.mode-badge { margin-left: auto; font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-soft); border: 1px solid rgba(76,194,255,.25); padding: 3px 10px; border-radius: 999px; }
+.messages { flex: 1; overflow-y: auto; padding: 22px 18px; display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; max-width: 76ch; }
+.msg.user { align-self: flex-end; }
+.msg.agent, .msg.system { align-self: flex-start; }
+.bubble { padding: 10px 14px; border-radius: var(--radius); line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+.msg.user .bubble { background: var(--accent-soft); border: 1px solid rgba(76,194,255,.25); border-bottom-right-radius: 4px; }
+.msg.agent .bubble { background: var(--bg-raised); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.error .bubble { background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.4); color: #ffb4ae; }
+.bubble code { font-family: Consolas, "Cascadia Mono", monospace; font-size: .9em; background: rgba(110,118,129,.25); padding: 1px 5px; border-radius: 5px; }
+.bubble pre { background: #0a0e14; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; overflow-x: auto; margin: 6px 0; }
+.bubble pre code { background: none; padding: 0; }
+.bubble a { color: var(--accent); }
+.bubble ul, .bubble ol { margin: 4px 0 4px 20px; }
+.bubble h1, .bubble h2, .bubble h3 { font-size: 1.05em; margin: 8px 0 4px; }
+.typing { display: inline-flex; gap: 5px; padding: 14px 16px; }
+.typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); animation: blink 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,70%,100% { opacity: .25; } 35% { opacity: 1; } }
+.composer { display: flex; gap: 10px; align-items: flex-end; padding: 14px 18px 18px; border-top: 1px solid var(--border); }
+.composer textarea { flex: 1; resize: none; background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font: inherit; padding: 11px 14px; max-height: 160px; outline: none; }
+.composer textarea:focus { border-color: var(--accent); }
+.composer button { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; background: var(--accent); color: #05233a; font-size: 17px; flex-shrink: 0; }
+.composer button:disabled { opacity: .4; cursor: default; }
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-avatar">A</div>
+    <h1>Welcome to Aria</h1>
+    <p class="gate-sub">Enter your API keys to start. At least one is required.</p>
+    <label>Claude API key <span class="hint" id="claudeHint"></span>
+      <input type="password" id="claudeKey" placeholder="sk-ant-…" autocomplete="off" />
+    </label>
+    <label>Gemini API key <span class="hint" id="geminiHint"></span>
+      <input type="password" id="geminiKey" placeholder="AIza…" autocomplete="off" />
+    </label>
+    <button id="enterBtn">Enter</button>
+    <p class="gate-error hidden" id="gateError"></p>
+    <p class="gate-note">Keys are stored only in this browser (localStorage) and sent directly to Anthropic / Google — there is no middleman server.</p>
+  </div>
+</div>
+
+<div class="chat hidden" id="chat">
+  <header class="chat-header">
+    <span class="conn-dot"></span>
+    <span>Aria</span>
+    <span class="mode-badge">cloud mode</span>
+  </header>
+  <div class="messages" id="messages"></div>
+  <form class="composer" id="composer">
+    <textarea id="input" rows="1" placeholder="Message…" autocomplete="off"></textarea>
+    <button type="submit" id="sendBtn" aria-label="Send">➤</button>
+  </form>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const messagesEl = $("messages"), inputEl = $("input"), sendBtn = $("sendBtn");
+
+const SYSTEM = `You are Aria, a personal AI Chief of Staff — a friend, coworker, and assistant all in one.
+This is your CLOUD chat: the hands-on tools (email, calendar, GitHub, browser control, long-term memory)
+run only in the desktop version on the user's own PC. Here you chat, plan, draft, and advise.
+Be warm, direct, and useful. Keep replies reasonably short.`;
+
+const GEMINI_MODELS = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+const CLAUDE_MODEL = "claude-sonnet-4-6";
+
+let keys = { claude: localStorage.getItem("aria_claude_key") || "", gemini: localStorage.getItem("aria_gemini_key") || "" };
+let history = []; // [{role:'user'|'assistant', content:string}]
+let thinkingEl = null;
+
+/* ---------- markdown-lite ---------- */
+function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function renderMarkdown(text) {
+  const blocks = [];
+  let src = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, _l, c) => { blocks.push(c); return ` ${blocks.length - 1} `; });
+  src = escapeHtml(src);
+  src = src.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  src = src.replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
+  src = src.replace(/(^|\s)\*([^*\n]+)\*/g, "$1<i>$2</i>");
+  src = src.replace(/^### (.+)$/gm, "<h3>$1</h3>").replace(/^## (.+)$/gm, "<h2>$1</h2>").replace(/^# (.+)$/gm, "<h1>$1</h1>");
+  src = src.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  src = src.replace(/(^|[^"(])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  src = src.replace(/((?:^[-*] .+\n?)+)/gm, (b) => "<ul>" + b.trim().split("\n").map((l) => `<li>${l.replace(/^[-*] /, "")}</li>`).join("") + "</ul>");
+  src = src.replace(/((?:^\d+\. .+\n?)+)/gm, (b) => "<ol>" + b.trim().split("\n").map((l) => `<li>${l.replace(/^\d+\. /, "")}</li>`).join("") + "</ol>");
+  src = src.replace(/ (\d+) /g, (_, i) => `<pre><code>${escapeHtml(blocks[+i])}</code></pre>`);
+  return src;
+}
+
+/* ---------- rendering ---------- */
+function scrollDown() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+function addMessage(role, text, markdown = false) {
+  const wrap = document.createElement("div");
+  wrap.className = `msg ${role}`;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (markdown) { bubble.style.whiteSpace = "normal"; bubble.innerHTML = renderMarkdown(text); }
+  else bubble.textContent = text;
+  wrap.appendChild(bubble);
+  messagesEl.appendChild(wrap);
+  scrollDown();
+}
+function showThinking() {
+  hideThinking();
+  thinkingEl = document.createElement("div");
+  thinkingEl.className = "msg agent";
+  thinkingEl.innerHTML = '<div class="bubble typing"><span></span><span></span><span></span></div>';
+  messagesEl.appendChild(thinkingEl);
+  scrollDown();
+}
+function hideThinking() { if (thinkingEl) { thinkingEl.remove(); thinkingEl = null; } }
+
+/* ---------- model calls (browser → API, no server) ---------- */
+async function askClaude(msgs) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": keys.claude,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 2048, system: SYSTEM, messages: msgs }),
+  });
+  if (!res.ok) throw new Error(`Claude ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  const data = await res.json();
+  return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+}
+
+async function askGemini(msgs) {
+  const contents = msgs.map((m) => ({ role: m.role === "user" ? "user" : "model", parts: [{ text: m.content }] }));
+  let lastErr = null;
+  for (const model of GEMINI_MODELS) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": keys.gemini },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM }] }, contents }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const parts = data.candidates?.[0]?.content?.parts || [];
+      return parts.map((p) => p.text || "").join("") || "(no reply)";
+    }
+    lastErr = `Gemini ${model} ${res.status}`;
+    if (![404, 429, 503].includes(res.status)) break; // real error — don't walk the chain
+  }
+  throw new Error(lastErr || "Gemini unavailable");
+}
+
+async function ask(msgs) {
+  if (keys.claude) {
+    try { return await askClaude(msgs); }
+    catch (e) { if (!keys.gemini) throw e; }
+  }
+  if (keys.gemini) return await askGemini(msgs);
+  throw new Error("No API key configured.");
+}
+
+/* ---------- composer ---------- */
+function setBusy(b) { sendBtn.disabled = b; }
+async function send() {
+  const text = inputEl.value.trim();
+  if (!text || sendBtn.disabled) return;
+  addMessage("user", text);
+  inputEl.value = "";
+  inputEl.style.height = "auto";
+  setBusy(true);
+  history.push({ role: "user", content: text });
+  if (history.length > 40) history = history.slice(-40);
+  showThinking();
+  try {
+    const reply = await ask(history);
+    history.push({ role: "assistant", content: reply });
+    hideThinking();
+    addMessage("agent", reply, true);
+  } catch (e) {
+    history.pop(); // keep history consistent with what the model actually saw
+    hideThinking();
+    addMessage("error", String(e.message || e));
+  } finally {
+    setBusy(false);
+  }
+}
+$("composer").addEventListener("submit", (e) => { e.preventDefault(); send(); });
+inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+inputEl.addEventListener("input", () => { inputEl.style.height = "auto"; inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + "px"; });
+
+/* ---------- gate ---------- */
+function enterChat() {
+  $("gate").classList.add("hidden");
+  $("chat").classList.remove("hidden");
+  addMessage("agent", "Hi! I'm Aria — cloud mode. I can chat, plan, and draft anywhere; my hands-on tools (email, calendar, GitHub, browser control) live in the desktop version on your PC. What can I do for you?");
+  inputEl.focus();
+}
+function submitKeys() {
+  const c = $("claudeKey").value.trim(), g = $("geminiKey").value.trim();
+  if (c) { keys.claude = c; localStorage.setItem("aria_claude_key", c); }
+  if (g) { keys.gemini = g; localStorage.setItem("aria_gemini_key", g); }
+  if (!keys.claude && !keys.gemini) {
+    const err = $("gateError");
+    err.textContent = "Please enter at least one API key (Claude or Gemini).";
+    err.classList.remove("hidden");
+    return;
+  }
+  enterChat();
+}
+$("enterBtn").addEventListener("click", submitKeys);
+["claudeKey", "geminiKey"].forEach((id) => $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") submitKeys(); }));
+
+if (keys.claude) $("claudeHint").textContent = "✓ saved — leave blank to keep";
+if (keys.gemini) $("geminiHint").textContent = "✓ saved — leave blank to keep";
+$("claudeKey").focus();
+</script>
+</body>
+</html>

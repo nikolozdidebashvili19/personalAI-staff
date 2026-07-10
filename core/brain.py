@@ -41,6 +41,10 @@ class Brain:
         if _HAS_GEMINI and settings.has_gemini:
             self._gemini = genai.Client(api_key=settings.gemini_api_key)
 
+    def reinit(self) -> None:
+        """Re-read settings and rebuild the API clients (e.g. after keys change)."""
+        self.__init__()
+
     @property
     def available(self) -> bool:
         return self._claude is not None or self._gemini is not None
@@ -115,7 +119,7 @@ class Brain:
                 break
             except Exception as e:
                 code = getattr(e, "code", None) or getattr(e, "status_code", None)
-                if code in (404, 429):  # bad model name or quota — try the next one
+                if code in (404, 429, 503):  # bad model, quota, or overloaded — try the next one
                     log.warning("Gemini %s unavailable (%s) — trying next model", model_name, code)
                     last_err = e
                     continue
